@@ -371,9 +371,24 @@ class Handler(BaseHTTPRequestHandler):
             print(f'[ASK/{src}] {question[:60]!r} → {len(answer)} chars')
             self._json(200, {'answer': answer})
         except urllib.error.HTTPError as e:
-            err = e.read().decode()
+            err = e.read().decode(errors='replace')
+            err_message = ''
+            try:
+                err_payload = json.loads(err)
+                err_message = str(err_payload.get('error', {}).get('message', '')).strip()
+            except Exception:
+                pass
+
+            lowered = err_message.lower()
+            if 'credit balance is too low' in lowered or 'plans & billing' in lowered or 'purchase credits' in lowered:
+                answer = 'Signal interference: Anthropic billing credits are depleted. Add credits in Anthropic Plans & Billing and retry.'
+            elif e.code == 401 or 'api key' in lowered or 'authentication' in lowered:
+                answer = 'Signal lost. ANTHROPIC_API_KEY is invalid or unauthorized. Update .env and restart.'
+            else:
+                answer = 'Signal interference. Anthropic API request failed.'
+
             print(f'[ERR] Anthropic {e.code}: {err[:200]}')
-            self._json(500, {'answer': 'Signal interference. Check your API key.'})
+            self._json(500, {'answer': answer})
         except Exception as e:
             print(f'[ERR] {e}')
             self._json(500, {'answer': 'Transmission failed. Try again.'})
