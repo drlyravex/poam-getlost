@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>POAM — Get Lost</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B8GTKYRWWR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B8GTKYRWWR');
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Special+Elite&family=Barlow+Condensed:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -1031,6 +1038,7 @@ async function askTrumley(question){
   entry.appendChild(qDiv); entry.appendChild(aDiv);
   secretLog.appendChild(entry);
   secretLog.scrollTop = secretLog.scrollHeight;
+  gtag('event', 'question_asked', { question_length: question.length });
   try {
     const resp = await fetch('/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question})});
     const data = await resp.json();
@@ -1282,6 +1290,7 @@ function resetScreen(){
 function approach(){
   if(state!==S.IDLE) return;
   state=S.APPROACH;
+  gtag('event', 'terminal_approached');
   hint.style.animation='none';
   hint.style.opacity='0';
   tw.classList.add('approached');
