@@ -533,7 +533,7 @@
                       </div>
                     </div>
                   </div>
-                  <button id="launchBtn" onclick="window.open('https://www.getlostsf.com','_blank')">▶ LAUNCH GETLOSTSF.COM</button>
+                  <button id="launchBtn" onclick="gtag('event','getlostsf_clicked');window.open('https://www.getlostsf.com','_blank')">▶ LAUNCH GETLOSTSF.COM</button>
                 </div>
               </div>
 
@@ -1062,6 +1062,7 @@ function initButtons(){
       if(pressedBtns.length === 3){
         const allGreen = pressedBtns.every(idx => GREEN_INDICES.includes(idx));
         if(allGreen){
+          gtag('event', 'puzzle_solved');
           playButtonUnlock();
           setTimeout(activateSecretTerminal, 350);
         } else {
@@ -1117,6 +1118,7 @@ function dismissDateMode(andShowMessage){
 async function showDateQuery(digits){
   dateMode = true;
   const { display, readable } = formatYear(digits);
+  gtag('event', 'year_queried', { year: readable });
 
   // Keep year visible in numpad display during date mode
   const nd = document.getElementById('numDisplay');
